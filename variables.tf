@@ -26,7 +26,7 @@ variable "tenant_id" {
 }
 
 variable "resource_group_name" {
-  default = "nonprod-tf-rg-airflow"
+  default = "nonprod-aks-rg-airflow"
 }
 
 variable "location" {
@@ -41,30 +41,31 @@ variable "linux_profile" {
     ssh_public_key = "~/.ssh/azureuser_id_rsa.pub"
   }
 }
-variable "os" {
-  type = map(string)
 
-  default = {
-    vm_size         = "Standard_D2ps_v5"
-    os_type         = "Linux"
-    os_disk_size_gb = 30
-    type            = "VirtualMachineScaleSets"
-  }
-}
+# variable "os" {
+#   type = map(string)
+
+#   default = {
+#     vm_size         = "Standard_D2ps_v5"
+#     os_type         = "Linux"
+#     os_disk_size_gb = 30
+#     type            = "VirtualMachineScaleSets"
+#   }
+# }
 
 variable "network_profile" {
   type = map(string)
 
   default = {
     network_plugin     = "kubenet"
-    docker_bridge_cidr = "10.43.192.1/18"
-    dns_service_ip     = "10.43.128.10"
-    pod_cidr           = "10.43.0.0/17" ????????
-    vnet_cidr          = "10.43.0.0/17"
-    subnet_cidr        = "10.43.0.0/17"
-    service_cidr       = "10.43.128.0/18"
-    load_balancer_sku  = "Standard"
-    service_endpoints  = "Microsoft.Sql"
+    docker_bridge_cidr = "170.10.0.1/16"
+    dns_service_ip     = "10.0.2.10" # in same with service_cidr
+    # pod_cidr           = "10.43.0.0/17"
+    vnet_cidr         = "10.43.0.0/17"
+    subnet_cidr       = "10.43.0.0/17"
+    service_cidr      = "10.0.2.0/24"
+    load_balancer_sku = "Standard"
+    service_endpoints = "Microsoft.Sql"
   }
 }
 
@@ -74,9 +75,9 @@ variable "profile" {
   default = {
     resource_group_vnet       = "nonprod-vnet-rg-airflow"
     vnet_name                 = "nonprod-vnet-airflow"
-    vnet_cidr                 = "10.13.216.0/23"
+    vnet_cidr                 = "10.0.0.0/16"
     subnet_name               = "nonprod-subnet-airflow-private-0"
-    subnet_cidr               = "10.13.216.128/26"
+    subnet_cidr               = "10.0.1.0/24"
     kubernetes_version        = "1.24.6"
     role_based_access_control = true
     nodes_count               = 2
@@ -94,7 +95,7 @@ variable "monitoring" {
 
   default = {
     workspace_name                  = "airflow-log"
-    workspace_sku                   = "PerNode"
+    workspace_sku                   = "PerGB2018"
     workspace_location              = "eastus"
     log_workspace_retention_in_days = 30
     enable_oms_agent                = true
